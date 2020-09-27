@@ -1,6 +1,8 @@
 
 # Java Packager
-A simple program to pack a Jar-File into a Windows-Executable
+A simple program to pack a Jar-File into a Windows-Executable.
+The Bytecode gets fully obfuscated and unreadable by any other program.
+> Tip: If u want to change the Icon use another Tool like Resource Hacker
 
 # Features (Parameters)
 - nogui: disables all the setup Interfaces, only Errors would still show up
