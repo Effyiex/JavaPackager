@@ -1,6 +1,6 @@
 
 # Java Packager
-A Simple Program to pack a Jar-File into a Windows-Executable
+A simple program to pack a Jar-File into a Windows-Executable
 
 # Features (Parameters)
 - nogui: disables all the setup Interfaces, only Errors would still show up
