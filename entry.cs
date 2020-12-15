@@ -20,12 +20,16 @@ namespace JavaPackager {
             return bytes;
         }
 
+        [STAThread]
         public static void Main(string[] args) {
             bool gui = true, shell = false;
+            string parsethrough = string.Empty;
             if(args.Length > 0) {
-                foreach (string arg in args)
+                foreach (string arg in args) {
                     if (arg.Equals("nogui")) gui = false;
                     else if (arg.Equals("shell")) shell = true;
+                    parsethrough += ' ' + arg;
+                }
             }
             string cwd = Environment.CurrentDirectory;
             string exe = Process.GetCurrentProcess().MainModule.FileName;
@@ -58,19 +62,32 @@ namespace JavaPackager {
                     stream.Close();
                 }
                 ProcessStartInfo info = new ProcessStartInfo();
-                if(exe.EndsWith(".shell.exe")) {
-                    info.Arguments = "/c title Effyiex Java Packager & java -jar \"" + jar + "\" & pause";
+                if (exe.EndsWith(".shell.exe")) {
+                    info.Arguments = "/c title Effyiex Java Packager & java -jar \"" + jar + "\"" + parsethrough + " & pause";
                     info.FileName = "cmd.exe";
-                } else info.FileName = jar;
+                } else {
+                    info.Arguments = parsethrough.Substring(1);
+                    info.FileName = jar;
+                }
                 info.WorkingDirectory = cwd;
                 Process.Start(info).WaitForExit();
                 File.Delete(jar);
             } else {
+                short jcount = 0;
                 foreach (string f in Directory.GetFiles(cwd))
                     if (f.EndsWith(".jar")) {
                         jar = f;
-                        break;
+                        jcount++;
                     }
+                if (jcount > 1 && gui) {
+                    OpenFileDialog dialog = new OpenFileDialog();
+                    dialog.Title = "There are multiple Jars to choose from.";
+                    dialog.InitialDirectory = cwd;
+                    dialog.Filter = "Java Package (*.jar) | *.jar";
+                    dialog.Multiselect = false;
+                    if (dialog.ShowDialog() == DialogResult.OK) jar = dialog.FileName;
+                    else Environment.Exit(0);
+                }
                 if (!File.Exists(jar)) {
                     string msg = "There has to be placed a jar-file in the same folder as the packager!";
                     MessageBox.Show(msg, "ERROR: jar not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
